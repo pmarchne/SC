@@ -9,20 +9,19 @@ Created on Wed Jun 20 09:51:20 2018
 # import bempp modules
 import bempp.api
 from bempp.api.operators.potential import helmholtz as helmholtz_potential
-
 # import usual python librairies
 import numpy as np
 import time
-from matplotlib import pyplot as plt
-import matplotlib.cm as cm
-from matplotlib.patches import Circle
+#from matplotlib import pyplot as plt
+#import matplotlib.cm as cm
+#from matplotlib.patches import Circle
 import sys
 
 # import special functions
 from scipy.special import spherical_jn as jn
 from scipy.special import spherical_yn as yn
 from scipy.special import eval_legendre
-from scipy.sparse.linalg import gmres
+from scipy.sparse.linalg import gmres,spilu
 # define analytical solution: scattering from the unit sphere 
 def analytic_sol(R,a,theta,Ampli,k,N_terms):
     result = 0
@@ -36,6 +35,16 @@ def analytic_sol(R,a,theta,Ampli,k,N_terms):
 def pressure_db(u,p0):   
     return 10*np.log10(np.abs(u)**2/p0**2)
 
+
+class fgmres_counter(object):
+    def __init__(self, disp=True):
+        self._disp = disp
+        self.niter = 0
+    def __call__(self,xk=None):
+        self.niter += 1
+        if self._disp:
+            print('iteration %i' % (self.niter))
+    
 class gmres_counter(object):
     def __init__(self, disp=True):
         self._disp = disp
@@ -99,10 +108,9 @@ def run_bempp_sphere(freq):
     dirichlet_grid_fun = bempp.api.GridFunction(space, fun=dirichlet_fun)
     neumann_grid_fun = bempp.api.GridFunction(space, fun=neumann_fun)
     rhs_fun = dirichlet_grid_fun - ntd * neumann_grid_fun
-    
-    #A = bempp.api.as_matrix(burton_miller.weak_form())
-    #print("Condition number of the bem matrix = %1.2f" %np.linalg.cond(bem_mat))
-      
+
+    # bem assembling    
+    print("Assembling bem operator...")
     t = time.time()
     discrete_op = burton_miller.strong_form()
     coeffs = rhs_fun.coefficients
@@ -112,11 +120,20 @@ def run_bempp_sphere(freq):
     # solve the linear system 
     t = time.time()
     counter = gmres_counter()
-    x, info = gmres(discrete_op, coeffs, tol = tol_gmres,callback=counter)
+    x, info = gmres(discrete_op, coeffs,x0 = coeffs, maxiter = 100,tol = tol_gmres,callback=counter)
     elapsed = time.time() - t
     print("Gmres solving time: %1.1f sec" %elapsed)
     It = counter.niter
     Residuals = np.asarray(counter.residuals)
+    
+#    rk=[]
+#    t = time.time()
+#    counter = fgmres_counter() #M = identity.strong_form()
+#    x,info = pyamg.krylov.fgmres(discrete_op, coeffs, x0 = coeffs, tol = 1e-9,maxiter=100,callback=counter,residuals=rk)
+#    elapsed = time.time() - t
+#    print("fGmres solving time: %1.1f sec" %elapsed)
+#    It = counter.niter
+#    Residuals = np.asarray(rk)
     total_field = bempp.api.GridFunction(discrete_op, coefficients=x)
     
     if vis_figs == 1:

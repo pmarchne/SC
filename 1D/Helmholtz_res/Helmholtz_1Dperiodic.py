@@ -59,8 +59,8 @@ C = 120 # Sutherland's constant
 rho0 = 1.292 # air density 0 degree
 Z0 = rho0*c0
 
-T = T0 + np.arange(0,1800,200)
-T = T0 + np.arange(0,200,100)
+#T = T0 + np.arange(0,1800,200)
+T = T0 + np.arange(0,600,100)
 N_T = len(T)
 c = 20.05*np.sqrt(T)
 eta = eta0*((T0+C)/(T+C))*(T/T0)**(1.5)
@@ -71,12 +71,12 @@ Z = rho*c
 #etaw = 5.829e-5 # 4.15e-5 air dynamic viscosity at 1000K
 #Zw = rhow*cw 
 
-d = 0.1#0.8e-3 # length of the neck
-phi = 0.021875#0.05#0.03 # porosity-open area ratio
-r = 0.125#0.15e-3 #0.15e-3 # radius of the neck
+d = 0.8e-3#,0.1 # length of the neck
+phi = 0.05#0.03,0.021875 # porosity-open area ratio
+r = 0.15e-3 #0.15e-3, 0.125 # radius of the neck
 eps_0 = (8*r)/(3*np.pi)
 eps_e = eps_0*(1 - 1.14*np.sqrt(phi))
-L = 1.5#0.02 # size of the cavity
+L = 0.02#,1.5 # size of the cavity
 
 
 min_freq = 1
