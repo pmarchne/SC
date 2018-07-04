@@ -55,8 +55,7 @@ class gmres_counter(object):
         self.residuals.append(rk)
         if self._disp:
             print('iteration %3i: residual = %s' % (self.niter, str(rk)))
-            
-#@profile   
+               
 def run_bempp_sphere(freq):
     # Parameters
     #freq = 546.2197646913849
