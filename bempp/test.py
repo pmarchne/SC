@@ -21,7 +21,7 @@ import sys
 from scipy.special import spherical_jn as jn
 from scipy.special import spherical_yn as yn
 from scipy.special import eval_legendre
-from scipy.sparse.linalg import gmres,spilu
+from scipy.sparse.linalg import gmres
 # define analytical solution: scattering from the unit sphere 
 def analytic_sol(R,a,theta,Ampli,k,N_terms):
     result = 0
@@ -36,14 +36,14 @@ def pressure_db(u,p0):
     return 10*np.log10(np.abs(u)**2/p0**2)
 
 
-class fgmres_counter(object):
-    def __init__(self, disp=True):
-        self._disp = disp
-        self.niter = 0
-    def __call__(self,xk=None):
-        self.niter += 1
-        if self._disp:
-            print('iteration %i' % (self.niter))
+#class fgmres_counter(object):
+#    def __init__(self, disp=True):
+#        self._disp = disp
+#        self.niter = 0
+#    def __call__(self,xk=None):
+#        self.niter += 1
+#        if self._disp:
+#            print('iteration %i' % (self.niter))
     
 class gmres_counter(object):
     def __init__(self, disp=True):
@@ -56,9 +56,7 @@ class gmres_counter(object):
         if self._disp:
             print('iteration %3i: residual = %s' % (self.niter, str(rk)))
             
-
-
-
+#@profile   
 def run_bempp_sphere(freq):
     # Parameters
     #freq = 546.2197646913849
@@ -72,7 +70,7 @@ def run_bempp_sphere(freq):
     p0 = 2e-5
     vis_mesh = 0
     vis_figs = 0
-    save_data = 1
+    save_data = 0
     # linear solver parameters
     tol_gmres = 1e-5
         
@@ -114,15 +112,15 @@ def run_bempp_sphere(freq):
     t = time.time()
     discrete_op = burton_miller.strong_form()
     coeffs = rhs_fun.coefficients
-    elapsed = time.time() - t
-    print("Assembling bem operator: %1.1f sec" %elapsed)
+    elapsed_hm = time.time() - t
+    print("Assembling bem operator: %1.1f sec" %elapsed_hm)
 
     # solve the linear system 
     t = time.time()
     counter = gmres_counter()
     x, info = gmres(discrete_op, coeffs,x0 = coeffs, maxiter = 100,tol = tol_gmres,callback=counter)
-    elapsed = time.time() - t
-    print("Gmres solving time: %1.1f sec" %elapsed)
+    elapsed_gmres = time.time() - t
+    print("Gmres solving time: %1.1f sec" %elapsed_gmres)
     It = counter.niter
     Residuals = np.asarray(counter.residuals)
     
@@ -173,12 +171,12 @@ def run_bempp_sphere(freq):
     if save_data == 1:
         np.savetxt("polar_data"+str(freq)+"Hz.txt",u_polar)
         np.savetxt("polar_data_ex"+str(freq)+"Hz.txt",u_polar_ex)
-    err = np.abs(u_polar - u_polar_ex)
-    print("max error polar plot = %1.3e" %np.max(err))
+    err = np.max(np.abs(u_polar - u_polar_ex))
+    print("max error polar plot = %1.3e" %err)
     # compute the numerical solution on a grid
     t = time.time()
-    Nx = 200 
-    Ny = 200
+    Nx = 50 
+    Ny = 50
     xmin, xmax, ymin, ymax = [-3, 3, -3, 3]
     plot_grid = np.mgrid[xmin:xmax:Nx * 1j, ymin:ymax:Ny * 1j]
     points_grid = np.vstack((plot_grid[0].ravel(),
@@ -227,9 +225,53 @@ def run_bempp_sphere(freq):
         #np.savetxt("grid_points_x.txt",x)
         #np.savetxt("grid_points_y.txt",y)
         #np.savetxt("grid_points_z.txt",z)
+    
+    del discrete_op, coeffs, x, total_field, u_polar, slp_pot_polar, slp_pot, res, u_evaluated
+    
+    import gc
+    gc.collect() 
+    
+    return It, elapsed_gmres, elapsed_hm, err, space.global_dof_count
+    
 if __name__ == "__main__":
     #freq = 163.86592940741542
+    import resource
+    data_It = []
+    Err = []
+    T_gmres = []
+    T_hmat = []
+    N_dofs = []
     if len(sys.argv) > 1:
-        run_bempp_sphere(sys.argv[1])
+        print("***************************************************************")
+        print("************* bempp for high frequency scattering *************")
+        print("***************************************************************")
+        for i in range(0,30,50):
+            tmp = float(sys.argv[1]) + i
+            print("Running frequency " +str(tmp) + " Hz")
+            NbIt, t_gmres, t_hmat, err, n_dofs = run_bempp_sphere(tmp)
+#            mem_usage = memory_usage(run_bempp_sphere(tmp))
+            print("frequency " +str(tmp) + " Hz finished")            
+#            print('Memory usage (in chunks of .1 seconds): %s' % mem_usage)
+#            print('Maximum memory usage: %s' % max(mem_usage))
+            used_mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+            print("used memory: " +str(used_mem/1000)+ " Mb")
+            print("---------------------------------------------------------------")
+            print("---------------------------------------------------------------")
+            data_It.append(NbIt)
+            Err.append(err)
+            T_gmres.append(t_gmres)
+            T_hmat.append(t_hmat)
+            N_dofs.append(n_dofs)
+        print("Number of Iterations gmres: ", data_It)
+        print("Error polar plot at R = 3: ", Err)
+        print("Time gmres: ", T_gmres)
+        print("Time H mat assembly: ", T_hmat)
+        print("Number of dofs: ", N_dofs)
+        np.savetxt("It.txt",data_It)
+        np.savetxt("Err.txt",Err)
+        np.savetxt("T_gmres.txt",T_gmres)
+        np.savetxt("T_hmat.txt",T_hmat)
+        np.savetxt("N_dofs.txt",N_dofs)
+        #run_bempp_sphere(sys.argv[1])
     else:
         raise sys.exit("usage:  python " +str(sys.argv[0])+ " <frequency>")

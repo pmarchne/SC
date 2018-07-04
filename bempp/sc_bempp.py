@@ -58,7 +58,7 @@ def run_bempp_sc(freq):
     tol_gmres = 1e-5 # tolerance for the linear solver
     
     vis_figs = 0
-    save_data = 0
+    save_data = 1
     
     xs = 0.6#0.6
     ys = -0.5#-0.5
@@ -250,8 +250,18 @@ def run_bempp_sc(freq):
         np.savetxt("grid_data_realSC"+str(freq)+"Hz.txt",np.real(u_evaluated))
         np.savetxt("grid_data_imagSC"+str(freq)+"Hz.txt",np.imag(u_evaluated))
 if __name__ == "__main__":
+    import resource
     #freq = 687.5 or 430 Hz
     if len(sys.argv) > 1:
+        print("***************************************************************")
+        print("************* bempp for high frequency scattering *************")
+        print("***************************************************************")
+        print("Running frequency " + str(sys.argv[1]) + " Hz")
         run_bempp_sc(sys.argv[1])
+        print("frequency " +str(tmp) + " Hz finished")            
+        used_mem = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        print("used memory: " +str(used_mem/1000)+ " Mb")
+        print("---------------------------------------------------------------")
+        print("---------------------------------------------------------------")
     else:
         raise sys.exit("usage:  python " +str(sys.argv[0])+ " <frequency>")
