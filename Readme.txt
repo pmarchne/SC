@@ -17,7 +17,7 @@ My set up is Ubuntu 16.04 with:
 
 Here is a quick overview of the routines [with the corresponding folder/file]:
 1D [1D/]:
-- Illustrative dispersion relation for periodic media [DispRel.py]
+- Illustration of the dispersion relation in free space [DispRel.py]
 - Analytic dispersion relation [Multilayer/multilayer.py]
 - Transfer matrix method [Multilayer/multilayer_TMM.py]
 - discrete periodic mass-spring system and Helmholtz resonator [Helmholtz_res/1DPeriodic_HelmholtzResModel.py]
