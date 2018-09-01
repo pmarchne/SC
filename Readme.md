@@ -19,6 +19,7 @@ My set up is Ubuntu 16.04 with:
 - bempp (3.3.3)
 
 Here is a quick overview of the routines with the corresponding [folder/file]:
+
 **1D [1D]:**
 - Illustration of the dispersion relation in free space [/DispRel.py]
 - Analytic dispersion relation [/Multilayer/multilayer.py]
