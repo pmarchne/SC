@@ -35,7 +35,7 @@ Here is a quick overview of the routines with the corresponding [folder/file]:
 - 2-directions transmission [/Transmission/SC_PML/FEM_PML.py]
 
 **3D [3D-bempp]: BEM set up for sound hard scattering**
-- Unit sphere scattering sphere over several frequencies [/Sphere/sphere_loop.py]
+- Unit sphere scattering over several frequencies [/Sphere/sphere_loop.py]
 - Sonic crystal scattering [/SC_Jasa/SC_bempp.py], see reference for the geometry: *Karimi, M., Croaker, P., & Kessissoglou, N. (2017). Acoustic scattering for 3D multi-directional periodic structures using the boundary element method. _The Journal of the Acoustical Society of America_, _141_(1), 313-323.*
 
 Default cases are used if you run the codes as they are.
