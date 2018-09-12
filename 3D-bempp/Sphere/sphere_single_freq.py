@@ -131,14 +131,14 @@ def run_bempp_sphere(freq):
         
     ####################################################################################
     # plot polar pressure response in the xy-plane
-    #data_VAOne_BEM = np.loadtxt("/home/philippe/Documents/ESA/Python_SC/bempp/data_pp/Sphere/VAOne_results/Data_Sphere_FMM_546_R3.txt")
-    #data_VAOne_FMM = np.loadtxt("/home/philippe/Documents/ESA/Python_SC/bempp/data_pp/Sphere/VAOne_results/Data_Sphere_FMM_546_R3.txt")
+    #data_VAOne_BEM = np.loadtxt("/home/philippe/Documents/ESA/Python_SC/3D-bempp/Sphere/data_pp/VAOne_results/Data_Sphere_FMM_546_R3.txt")
+    #data_VAOne_FMM = np.loadtxt("/home/philippe/Documents/ESA/Python_SC/3D-bempp/Sphere/data_pp/VAOne_results/Data_Sphere_FMM_546_R3.txt")
     #data_VAOne_FMM = 2e-5*10**(data_VAOne_FMM/20)
     #data_VAOne_BEM = 2e-5*10**(data_VAOne_BEM/20)
 
     theta = np.linspace(0, 2 * np.pi, 361)
-    theta_ex = np.linspace(0, 2 * np.pi, 60)
-    #theta_VAOne = np.linspace(np.pi/2, np.pi/2+2*np.pi, len(data_VAOne_BEM))
+    theta_ex = np.linspace(0, 2 * np.pi, 80)
+    #theta_VAOne = np.linspace(np.pi/2, np.pi/2+2*np.pi, len(data_VAOne_FMM))
     xc = 0
     yc = 0
     z_cut=0
@@ -163,13 +163,13 @@ def run_bempp_sphere(freq):
     plt.plot(theta, pressure_db(u_polar,p0),"g--",linewidth=2.0,label="Bempp")
     plt.plot(theta_ex, pressure_db(u_polar_ex,p0),"ro",markersize=6,label="Analytical")
     #plt.polar(theta_VAOne, data_VAOne_BEM,"g-",linewidth=2.0,label="VAOne")
-    #plt.plot(theta_VAOne, data_VAOne_FMM,"b:",linewidth=2.0,label="VAOne 546Hz")
+    #plt.plot(theta_VAOne, data_VAOne_FMM,"b:",linewidth=2.0,label="VAOne")
     ax.tick_params(labelsize=font)
     ax.set_rmin(84)
     ax.set_rmax(98)
     ax.legend(fontsize=font-2)
     ax.grid(True)
-    #plt.savefig("/home/philippe/Documents/ESA/Python_SC/bempp/data_pp/Sphere/plots/polar.pdf", bbox_inches='tight')
+    #plt.savefig("/home/philippe/Documents/ESA/Python_SC/3D-bempp/Sphere/data_pp/plots/VAone_Spolar.pdf", bbox_inches='tight')
 
     plt.show()
     

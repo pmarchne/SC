@@ -111,10 +111,10 @@ plt.grid(True)
 plt.xticks([0,len(K1) ,len(K1)+len(K2) ,len(K1)+len(K2)+len(K3)],["$\Gamma$","$X$","$M$","$\Gamma$"],fontsize=font)
 plt.ylabel("Frequency [Hz]",fontsize=font+2)
 plt.xlabel("Bloch Wavevector",fontsize=font+2)
-plt.yticks(fontsize=font)
+plt.yticks(fontsize=font+2)
 plt.ylim(0,500)
 plt.xlim(0,len(K1)+len(K2)+len(K3))  
 plt.show()
 
 if save_figs ==1:
-    plt.savefig('/home/philippe/Documents/ESA/Report/fig/2D/BG/PWE/2D_BG_'+ name +'bis.pdf', bbox_inches='tight')
+    plt.savefig('/home/philippe/Documents/ESA/Report/fig/2D/BG/mesh/2D_PWEBG_'+ name +'bis.pdf', bbox_inches='tight')

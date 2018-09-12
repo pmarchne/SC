@@ -29,12 +29,11 @@ from subprocess import call
 import tqdm as tqdm
 #import sys
 #plt.close("all")
-#path = "/home/philippe/Documents/ESA/Python_SC/2D-fenics/BG/FEM/Geom/SQ/"
 path="Geom/SQ/"
-#path_scratch = "/home/philippe/Documents/ESA/Python_SC/2D-fenics/BG/FEM/Geom/scratch/"
 path_scratch = "Geom/scratch/"
 name = "Circle" # name of the .geo file e.g Circle, Circle_res, SQ or Circle_vaoneComp
 #path_save = "/home/philippe/Documents/ESA/Report/fig/2D/BG/SQ/"
+path_save = "/home/philippe/Documents/ESA/Report/fig/2D/BG/SQ/Res/"
 
 N_eigen = 24 # number of eigenvalues to solve
 pnts = 40 # 1/3 of the number of points along the IBZ
@@ -225,7 +224,7 @@ else:
 
 ################## plot the results #############################
 if plot_isofreq == 1:
-    for j in range(4):
+    for j in range(12):
         plt.figure(num=j+2,figsize=(4,4))
         z = [np.sqrt(np.abs(i.get_eigenpair(2*j)[0]))/(2*np.pi) for i in sol]
         Nlines  = 13
@@ -251,11 +250,11 @@ if plot_isofreq == 1:
             plt.plot([np.pi/a, 0], [np.pi/a, 0], color=color_IBZ, linestyle='-', linewidth=1.5)
             
             # to be used for the resonant case and non-symmetric geometries 
-            #plt.annotate("X'", xy=(0,np.pi/a),xytext=(-0.5,np.pi/a-0.5),fontsize=font,color=color_IBZ)
-            #plt.plot([0, 0], [0, np.pi/a], color=color_IBZ, linestyle='--', linewidth=1.5)
-            #plt.plot([0, np.pi/a], [np.pi/a-0.02, np.pi/a-0.02], color=color_IBZ, linestyle='--', linewidth=1.5)
+            plt.annotate("X'", xy=(0,np.pi/a),xytext=(-0.5,np.pi/a-0.5),fontsize=font,color=color_IBZ)
+            plt.plot([0, 0], [0, np.pi/a], color=color_IBZ, linestyle='--', linewidth=1.5)
+            plt.plot([0, np.pi/a], [np.pi/a-0.02, np.pi/a-0.02], color=color_IBZ, linestyle='--', linewidth=1.5)
             
-        plt.title("Equi-frequency contours - Mode " + str(j),fontsize=font)
+        #plt.title("Equi-frequency contours - Mode " + str(j),fontsize=font)
         if save_figs ==1:
             plt.savefig(path_save+name+'2D_KmapEig_'+ str(j) +'.pdf', bbox_inches='tight')
         
@@ -289,7 +288,7 @@ if plot_BG == 1:
 ##########################################################################################################
     
 if plot_eigenmodes == 1:
-    n_plot = 2# number of eigenmodes to plot
+    n_plot = 3# number of eigenmodes to plot
     # Plot pressure field
     for n in range(n_plot): # loop over the numbers of eigenmodes to plots
         N=0# Point on K-axis e.g 29
@@ -302,7 +301,7 @@ if plot_eigenmodes == 1:
         eig[:]=sol[N].get_eigenpair(2*n)[2] #solution au point (Kx,Ky)
     
         plt.figure(num=n+3,figsize=(3,3))
-        plt.title("Pressure Eigenmode %i: Kx={1:.1f}, Ky={2:.1f}".format(n,K[N][0],K[N][1]) %n,fontsize=font)
+        #plt.title("Pressure Eigenmode %i: Kx={1:.1f}, Ky={2:.1f}".format(n,K[N][0],K[N][1]) %n,fontsize=font)
         p = plot(pressure[0],backend="matplotlib",cmap=plt.cm.get_cmap('RdBu_r', 32))#,colorbar=True,show_axis='on')#, vmin = -1, vmax = 1)
         #p.set_cmap("plasma") #magma
 

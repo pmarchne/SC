@@ -2,8 +2,13 @@
 # -*- coding: utf-8 -*-
 """
 Solves the Helmholtz transmission problem in 2D with PML's in both x and y-directions.
-Input plane wave, radiation condition on the x and y-direction
-Simulates the response to an plane wave of arbitrary frequency of a sonic crystal  
+Simulates the acoustic scattering of a finite sonic crystal.
+
+Set up:
+Plane wave input on the left border
+PML on the top, bottom and right borders. Dirichlet BC (p=0) at the end of the PML's.
+
+The running frequency should be chosen w.r.t the PML efficiency.
 """
 from dolfin import *
 import matplotlib.pyplot as plt
@@ -33,7 +38,7 @@ omega = 2*np.pi*Freq
 path = "geometry/"
 name = "RectCircle9_res_new"#RectCircle9_new,RectCircleEmpty_new, RectCircle9_res_new
 PML=True
-err_analysis = False # put False when not using the empty mesh !!!
+err_analysis = False # set to False when not using the empty mesh !!!
 IL_analysis = True
 #savepath="/home/philippe/Documents/ESA/Report/fig/2D/PML/"
 save=False

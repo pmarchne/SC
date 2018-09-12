@@ -1,5 +1,5 @@
 // Inputs
-gridsize=1/30;
+gridsize=1/20;
 radius=0.45;
 radius_int = 0.4; //0.3
 a = 1;
